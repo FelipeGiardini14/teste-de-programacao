@@ -1,0 +1,420 @@
+<DOCTYPE html>
+<html>
+<head>
+	<title>Tarefa 2</title>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+
+  <style>
+
+  *{
+    margin: 0;
+    padding: 0;
+  }
+  body
+  {
+    background: #d2d2c1;
+    font-size: 1em;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+  }
+  #area-cabecalho
+  {
+    background: gray;
+    padding: 15px;
+    text-align: center;
+  }
+  #area-logo, #area-menu
+  {
+    padding: 10px;
+  }
+  a
+  {
+    text-decoration: none;
+  }
+  a:link, a:visited
+  {
+    font-weight: bold;
+    color: white;
+  }
+  a:hover
+  {
+    text-decoration: underline;
+  }
+  h1
+  {
+    color: white;
+    font-size: 2.5em;
+  }
+  #area-cabecalho a:link, #area-cabecalho a:visited
+  {
+    color: #FFF;
+    padding: 8px 12px;
+  }
+  #area-cabecalho a:hover
+  {
+    color: black;
+    background: #FFF;
+    text-decoration: none;
+  }
+  .divprincipal
+  {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  .botao
+  {
+    width: 100px;
+    padding: 10px 0px;
+  }
+  .classBotao
+  {
+    padding: 10px;
+  }
+
+  </style>
+</head>
+
+<body>
+  <div id="area-cabecalho">
+    <div id="area-logo">
+      <h1>Atividades</h1>
+    </div>
+
+    <div id="area-menu">
+      <a href="">HOME</a>
+      <a href="/testeEstagio/tarefa1.html">TAREFA 1</a>
+      <a href="">TAREFA 2</a>
+      <a href="">TAREFA 3</a>
+    </div>
+  </div>
+
+  <div class="divPrincipal">
+    <div class="classBotao"> 
+      <button id="animacao" class="botao">INICIAR</button>
+      <button id="pare" class="botao">PARE</button>
+      <button id="geracao" class="botao">AVANÇAR</button>
+      <button id="limpe" class="botao">LIMPAR</button>
+    </div>
+
+    <hr>
+
+    <canvas id="canvas"></canvas>
+  </div>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+<script>
+  
+  var tamanhoCelula = 12;
+  var corCelulaViva = "purple";
+  var corCelulaMorta = "white";
+  var corBorda = "lightBlue";
+
+  var fileirasTabuleiro = 23;
+  var colunasTabuleiro = 36;
+
+  var animado = false;
+  var lacoAtivo;
+
+  var fps = 20;
+
+  var intervalo = 1000 / fps;
+
+  var canvas = document.getElementById("canvas");
+  var context = canvas.getContext("2d");
+
+  canvas.width = 450;
+  canvas.height = 300;
+
+  context.lineWidth = 1;
+  context.strokeStyle = corBorda;
+
+  function Celula(fileira, coluna)
+  {
+    this.fileira = fileira;
+    this.coluna = coluna;
+
+    this.viva = false;
+
+    this.vivaNaProximaGeracao = false;
+  }
+
+  Celula.prototype.desenhe = function()
+  {
+    var cantoX = tamanhoCelula * this.coluna;
+    var cantoY = tamanhoCelula * this.fileira;
+
+    var corCelula;
+    if (this.viva) 
+    {
+      corCelula = corCelulaViva;
+    }
+    else
+    {
+      corCelula = corCelulaMorta;
+    }
+
+    context.fillStyle = corCelula;
+    context.fillRect(cantoX, cantoY, tamanhoCelula, tamanhoCelula);
+  };
+
+  function Tabuleiro(fileiras, colunas)
+  {
+    this.fileiras = fileiras;
+    this.colunas = colunas;
+
+    this.celulas = [];
+
+    for (var fileira=0; fileira<this.fileiras; fileira++)
+    {
+      this.celulas[fileira] = [];
+      for (var coluna=0; coluna<this.colunas; coluna++)
+      {
+        this.celulas[fileira][coluna] = new Celula(fileira, coluna);
+      }
+    }
+    this.desenhe();
+  }
+
+  Tabuleiro.prototype.desenhe = function()
+  {
+    for (var fileira=0; fileira<this.fileiras; fileira++)
+    {
+      for (var coluna=0; coluna<this.colunas; coluna++)
+      {
+        this.celulas[fileira][coluna].desenhe();
+      }
+    }
+  };
+
+  var tabuleiro = new Tabuleiro(fileirasTabuleiro, colunasTabuleiro);
+
+  canvas.addEventListener('click', function(event)
+  {
+    var boundingRect = this.getBoundingClientRect();
+
+    var x = event.clientX - boundingRect.left;
+    var y = event.clientY - boundingRect.top;
+
+    var fileira = Math.floor(y / tamanhoCelula);
+    var coluna = Math.floor(x / tamanhoCelula);
+
+    if(fileira<tabuleiro.fileiras && coluna<tabuleiro.colunas)
+    {
+      tabuleiro.celulas[fileira][coluna].viva = !tabuleiro.celulas[fileira][coluna].viva;
+      tabuleiro.celulas[fileira][coluna].desenhe();
+    }
+  });
+
+  Tabuleiro.prototype.contarVizinhasVivas = function(fileira, coluna)
+  {
+    var vizinhasVivas = 0;
+    for (var f=fileira-1; f<=fileira+1; f++)
+    {
+      for (var c=coluna-1; c<=coluna+1; c++)
+      {
+        if (!(f == fileira && c == coluna))
+        {
+          if (f >= 0 && f < this.fileiras && c >= 0 && c < this.colunas)
+          {
+            if (this.celulas[f][c].viva)
+            {
+              vizinhasVivas++;
+            }
+          }
+        }
+      }
+    }
+    return vizinhasVivas;
+  };
+
+  Tabuleiro.prototype.celulaProximaGeracao = function(fileira, coluna)
+  {
+    var vizinhasVivas = this.contarVizinhasVivas(fileira, coluna);
+    var celula = this.celulas[fileira][coluna];
+    var vivaNaProximaGeracao;
+
+    if(this.celulas[fileira][coluna].viva)
+    {
+      if(vizinhasVivas == 2 || vizinhasVivas == 3)
+      {
+        vivaNaProximaGeracao = true;
+      }
+      else
+      {
+        vivaNaProximaGeracao = false;
+      }
+    }
+    else
+    {
+      if (vizinhasVivas == 3)
+      {
+        vivaNaProximaGeracao = true;
+      }
+      else
+      {
+        vivaNaProximaGeracao = false;
+      }
+    }
+    celula.vivaNaProximaGeracao = vivaNaProximaGeracao;
+    return vivaNaProximaGeracao;
+  };
+
+  Tabuleiro.prototype.tabuleiroProximaGeracao = function()
+  {
+    var f;
+    var c;
+
+    for (f=0; f<this.fileiras; f++)
+    {
+      for (c=0; c<this.colunas; c++)
+      {
+        this.celulaProximaGeracao(f, c);
+      }
+    }
+
+    for (f=0; f<this.fileiras; f++)
+    {
+      for (c=0; c<this.colunas; c++)
+      {
+        this.celulas[f][c].viva = this.celulas[f][c].vivaNaProximaGeracao;
+      }
+    }
+    this.desenhe();
+  };
+
+  Tabuleiro.prototype.limpeTabuleiro = function()
+  {
+    for (var f=0; f<this.fileiras; f++)
+    {
+      for (var c=0; c<this.colunas; c++)
+      {
+        this.celulas[f][c].viva = false;
+      }
+    }
+    this.desenhe();
+  }
+
+  function lacoDeAnimacao()
+  {
+    setTimeout(function()
+    {
+      if(animando)
+      {
+        lacoAtivo = requestAnimationFrame(lacoDeAnimacao);
+        tabuleiro.tabuleiroProximaGeracao();
+      }
+    }, intervalo);
+  }
+
+  $("#geracao").click(function ()
+  {
+    tabuleiro.tabuleiroProximaGeracao();
+  });
+
+  $("#animacao").click(function ()
+  {
+    animando = true;
+    lacoDeAnimacao();
+    $(this).attr("disable", true);
+    $("#geracao").attr("disable", true);
+  });
+
+  $("#pare").click(function ()
+  {
+    animando = false;
+    cancelAnimationFrame(lacoAtivo);
+    $("#animacao").removeAttr("disable");
+    $("#geracao").removeAttr("disable", true);
+  });
+
+  $("#limpe").click(function ()
+  {
+    $("#pare").click();
+    tabuleiro.limpeTabuleiro();
+  });
+
+  Tabuleiro.prototype.darVida = function(fileira, coluna)
+  {
+    this.celulas[fileira][coluna].viva = true;
+  };
+
+  Tabuleiro.prototype.criarCriatura = function(coordinates)
+  {
+    coordinates.forEach(function(point)
+    {
+      this.darVida.apply(this, point);
+    }, this);
+  };
+
+  var glider1 = [[15, 1],
+                 [15, 2],
+                 [15, 3],
+                 [16, 3],
+                 [17, 2]];
+
+  var gliderGun = [[4, 0],
+                   [4, 1],
+                   [5, 0],
+                   [5, 1],
+
+                   [2, 10],
+                   [3, 9],
+                   [4, 8],
+                   [4, 9],
+                   [5, 6],
+                   [5, 7],
+                   [6, 8],
+                   [6, 9],
+                   [7, 9],
+                   [8, 10],
+
+                   [5, 11],
+                   [2, 12],
+                   [3, 12],
+                   [7, 12],
+                   [8, 12],
+
+                   [3, 15],
+                   [3, 16],
+                   [4, 15],
+                   [4, 17],
+                   [5, 15],
+                   [6, 15],
+                   [6, 16],
+                   [6, 17],
+                   [7, 16],
+                   [7, 17],
+
+                   [5, 19],
+                   [6, 19],
+                   [6, 20],
+
+                   [6, 23],
+                   [6, 24],
+                   [5, 23],
+                   [5, 25],
+                   [4, 26],
+                   [3, 23],
+                   [3, 26],
+                   [2, 26],
+                   [1, 23],
+                   [1, 25],
+                   [0, 23],
+                   [0, 24],
+
+                   [2, 34],
+                   [2, 35],
+                   [3, 34],
+                   [3, 35]];
+
+  tabuleiro.criarCriatura(gliderGun);
+  tabuleiro.desenhe();
+
+  $("#animacao").click();
+  
+</script>
+</html>

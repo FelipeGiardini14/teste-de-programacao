@@ -1,0 +1,452 @@
+<DOCTYPE html>
+<html>
+<head>
+	<title>Tarefa 1</title>
+	<meta charset="utf-8">
+
+  <style>
+
+  *{
+    margin: 0;
+    padding: 0;
+  }
+  body
+  {
+    background: #d2d2c1;
+    font-size: 1em;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+  }
+  .divprincipal
+  {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  #numD, #numR
+  {
+    width: 250px;
+    padding: 10px;
+  }
+  #botao
+  {
+    width: 100px;
+    padding: 10px;
+  }
+  #botaoLimpar
+  {
+    width: 100px;
+    padding: 10px;
+    float: right;
+  }
+  #alerta
+  {
+    width: 100px;
+    padding: 10px;
+    color: red;
+    position: relative;
+    left: 40%;
+    transform: translate(-50%,-50%);
+  }
+  #area-cabecalho
+  {
+    background: gray;
+    padding: 15px;
+    text-align: center;
+  }
+  #area-logo, #area-menu
+  {
+    padding: 10px;
+  }
+  a
+  {
+    text-decoration: none;
+  }
+  a:link, a:visited
+  {
+    font-weight: bold;
+    color: white;
+  }
+  a:hover
+  {
+    text-decoration: underline;
+  }
+  h1
+  {
+    color: white;
+    font-size: 2.5em;
+  }
+  #area-cabecalho a:link, #area-cabecalho a:visited
+  {
+    color: #FFF;
+    padding: 8px 12px;
+  }
+  #area-cabecalho a:hover
+  {
+    color: black;
+    background: #FFF;
+    text-decoration: none;
+  }
+
+  </style>
+</head>
+
+<body>
+  <div id="area-cabecalho">
+    <div id="area-logo">
+      <h1>Atividades</h1>
+    </div>
+
+    <div id="area-menu">
+      <a href="">HOME</a>
+      <a href="">TAREFA 1</a>
+      <a href="">TAREFA 2</a>
+      <a href="">TAREFA 3</a>
+    </div>
+  </div>
+	<div class="divPrincipal">
+    <div>
+      <label>NÚMERO ROMANO</label>
+  		<input type="text" id = "numR" name="numR" placeholder="letras maiúsculas"/>
+      <button id="botao" onclick="converterDecimal()">Converter</button>
+    </div>
+    </br>
+
+    <div>
+  		<label>NÚMERO DECIMAL</label>
+  		<input type="number" id ="numD" min="1" max="3999" name="numD" placeholder="1 à 3999"/>
+      <button id="botao" onclick="converterRomano()">Converter</button>
+    </div>
+    </br>
+
+    <div>
+      <button type="reset" id="botaoLimpar" onclick="limpar()">Limpar</button>
+    </div>
+  </br>
+    <label id="alerta"></label>
+	</div>
+
+</body>
+
+<script>
+  function converterRomano() 
+  {
+    var num = 0;
+    var rom = "";
+    var v = true;
+
+    num = document.querySelector("#numD").value;
+
+    while(true)
+    {
+      if (num<4000 && num>999)
+      {
+        switch (Math.floor(num/1000))
+        {
+          case 1: rom += "M"; break;
+          case 2: rom += "MM"; break;
+          case 3: rom += "MMM"; break;
+        }
+        num -= 1000 * (Math.floor(num/1000));
+      }
+      else if (num<1000 && num>99)
+      {
+        switch (Math.floor(num/100))
+        {
+          case 1: rom += "C"; break;
+          case 2: rom += "CC"; break;
+          case 3: rom += "CCC"; break;
+          case 4: rom += "CD"; break;
+          case 5: rom += "D"; break;
+          case 6: rom += "DC"; break;
+          case 7: rom += "DCC"; break;
+          case 8: rom += "DCCC"; break;
+          case 9: rom += "CM"; break;
+        }
+        num -= 100 * (Math.floor(num/100));
+      }
+      else if (num<100 && num>9)
+      {
+        switch (Math.floor(num/10))
+        {
+          case 1: rom += "X"; break;
+          case 2: rom += "XX"; break;
+          case 3: rom += "XXX"; break;
+          case 4: rom += "XL"; break;
+          case 5: rom += "L"; break;
+          case 6: rom += "LX"; break;
+          case 7: rom += "LXX"; break;
+          case 8: rom += "LXXX"; break;
+          case 9: rom += "XC"; break;
+        }
+        num -= 10 * (Math.floor(num/10));
+      }
+      else if (num<10 && num>0)
+      {
+        switch (Math.floor(num))
+        {
+          case 1: rom += "I"; break;
+          case 2: rom += "II"; break;
+          case 3: rom += "III"; break;
+          case 4: rom += "IV"; break;
+          case 5: rom += "V"; break;
+          case 6: rom += "VI"; break;
+          case 7: rom += "VII"; break;
+          case 8: rom += "VIII"; break;
+          case 9: rom += "IX"; break;
+        }
+        num -= num;
+      }
+      else
+      {
+        document.getElementById('alerta').innerHTML = "Número inválido";
+        v = false;
+        break;
+      }
+      if (num==0)
+      {
+        break;
+      }
+    }
+    if (v)
+    {
+      document.querySelector("#numR").value = rom;
+      document.getElementById('alerta').innerHTML = "";
+    }
+  }
+
+  function converterDecimal()
+  {
+    var num = 0;
+    var rom = "";
+    var i = 0;
+    var j = 0;
+    var iM = 0;
+    var iD = 0;
+    var iC = 0;
+    var iL = 0;
+    var iX = 0;
+    var iV = 0;
+
+    var verdadeiro = true;
+
+    rom = document.querySelector("#numR").value;
+
+    //verifica se o número está correto
+    if (rom.length > 9)
+    {
+      verdadeiro = false;
+    }
+    for(j=0; j<rom.length; j++)
+    {
+      if (rom[j] == rom[j+1] && rom[j] == rom[j+2] && rom[j] == rom[j+3])
+      {
+        verdadeiro = false;
+        break;
+      }
+      else
+      {
+        break;
+      }
+    }
+
+    //após a verificação, realiza o cálculo
+    for(i=0; i<rom.length; i++)
+    {
+      if (verdadeiro == true)
+      { 
+        switch (rom[i])
+        {
+          case "M":
+            if (i > 0)
+            {
+              if (i > 1 && (rom[i-1] == "C" && rom[i-2] == "C"))
+              {
+                verdadeiro = false;
+                break;
+              }
+              else
+              {
+                if(rom[i-1] == "C")
+                  num += 800;
+                else if(rom[i-1] != "M")
+                {
+                  verdadeiro = false;
+                  break;
+                }
+                else
+                  num += 1000
+                break;
+              }
+            }
+            else
+              num += 1000
+            break;
+          case "D":
+            if(i > 0)
+            {
+              if (i > 1 && (rom[i-1] == "C" && rom[i-2] == "C"))
+              {
+                verdadeiro = false;
+                break;
+              }
+              else
+              {
+                if (rom[i-1] == "C")
+                  num += 300;
+                else if(rom[i-1] != "M" && rom[i-1] != "D")
+                {
+                  verdadeiro = false;
+                  break;
+                }
+                else
+                  num += 500;
+                break;
+              }
+            }
+            else
+              num += 500;
+            break;        
+          case "C":
+            if (i > 0)
+            {
+              if (i > 1 && (rom[i-1] == "X" && rom[i-2] == "X"))
+              {
+                verdadeiro = false;
+                break;
+              }
+              else
+              {
+                if(rom[i-1] == "X")
+                  num += 80;
+                else if(rom[i-1] != "M" && rom[i-1] != "D" && rom[i-1] != "C")
+                {
+                  verdadeiro = false;
+                  break;
+                }
+                else
+                  num += 100;
+                break;
+              }
+            }
+            else
+              num += 100;
+            break;
+          case "L":
+            if(i > 0)
+            {
+              if (i > 1 && (rom[i-1] == "X" && rom[i-2] == "X"))
+              {
+                verdadeiro = false;
+                break;
+              }
+              else
+              {
+                if(rom[i-1] == "X")
+                  num += 30;
+                else if(rom[i-1] != "M" && rom[i-1] != "D" && rom[i-1] != "C" && rom[i-1] != "L")
+                {
+                  verdadeiro = false;
+                  break;
+                }
+                else
+                  num += 50;
+                break;
+              }
+            }
+            else
+              num += 50;
+            break;
+          case "X":
+            if(i > 0)
+            {
+              if (i > 1 && (rom[i-1] == "I" && rom[i-2] == "I"))
+              {
+                verdadeiro = false;
+                break;
+              }
+              else
+              {
+                if(rom[i-1] == "I")
+                  num += 8;
+                else if(rom[i-1] == "V")
+                {
+                  verdadeiro = false;
+                  break;
+                }
+                else
+                  num += 10;
+                break;
+              }
+            }
+            else
+              num += 10;
+            break;
+          case "V":
+            if(i > 0)
+            {
+              if (i > 1 && (rom[i-1] == "I" && rom[i-2] == "I"))
+              {
+                verdadeiro = false;
+                break;
+              }
+              else
+              {
+                if(rom[i-1] == "I")
+                  num += 3;
+                else if(rom[i-1] == "V")
+                {
+                  verdadeiro = false;
+                  break;
+                }
+                else
+                  num += 5;
+                break;
+              }
+            }
+            else
+              num += 5;
+            break;
+          case "I":
+            num += 1;
+            break;
+        }
+      }
+      else
+      {
+        break;
+      }
+    }
+    if (num < 4000)
+    {
+      document.querySelector("#numD").value = num;
+      document.getElementById('alerta').innerHTML = "";
+    }
+    else
+    {
+      verdadeiro = false;
+    }
+
+    //se o número passar pela verificação e mesmo assim estiver errado, o programa chama a função e insere um possível número desejado
+    if (verdadeiro == false)
+    {
+      document.getElementById('alerta').innerHTML = "Número inválido";
+    }
+    else
+      converterRomano();
+
+    if (document.getElementById('alerta').innerHTML == "Número inválido")
+    {
+      document.querySelector("#numD").value = null;
+      document.querySelector("#numR").value = null;
+    }
+  }
+
+  function limpar()
+  {
+    document.querySelector("#numR").value = null;
+    document.querySelector("#numD").value = null;
+    document.getElementById('alerta').innerHTML = "";
+  }
+</script>
+</html>
