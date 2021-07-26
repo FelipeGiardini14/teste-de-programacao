@@ -18,10 +18,7 @@
   }
   .divprincipal
   {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
+    padding: 50px;
   }
   #area-cabecalho
   {
@@ -62,6 +59,18 @@
     background: #FFF;
     text-decoration: none;
   }
+  .classAjuste
+  {
+    width: 250px;
+    padding: 25px;
+    margin: 0 50px;
+  }
+  .botao
+  {
+    width: 100px;
+    padding: 0px;
+    margin: 0px;
+  }
 
   </style>
 </head>
@@ -80,13 +89,98 @@
     </div>
   </div>
 
-  <div>
-    
+  <div class="divPrincipal">
+    <!-- cliente -->
+    <div id="cliente" class="classAjuste">
+      <button type="button" id="adicionarCliente" class="botao">Adicionar cliente</button>
+
+      <div id="nomeCliente">
+        <td>Nome: </td> 
+        </br>
+        <td><input type="text" class="input" name="nomeCliente[]" placeholder="nome"></td>
+      </div>
+      <div id="pagar10">
+        <td><label>10%: </label></td>
+        </br>
+        <td><input type="text" class="input" name="pagar10[]" placeholder="Sim ou Não"></td>
+      </div>
+    </div>
+
+    <!-- quantidade produto -->
+    <div class="classAjuste">
+      <button type="button" id="quantProduto" class="botao" onclick="adicionarProdutoF()">Adicionar produto</button>
+    </div>
+
+    <!-- cliente produto -->
+    <div id="produto" class="classAjuste">    
+      <div class="clienteProduto">
+        <button type="button" id="adicionarClienteProduto" class="botao">Adicionar cliente produto</button>
+
+        <div id="nomeProduto">
+          <td>Produto:</td> 
+          </br>
+          <td><input type="text" class="input" name="nomeProduto[]" placeholder="produto"></td>
+        </div>
+
+        <div id="nomeClienteProduto">
+          <td><label>Nome cliente:</label></td>
+          </br>
+          <td><input type="text" class="input" name="nomeClienteProduto[]" placeholder="nome cliente"></td>
+        </div>
+      </div>
+    </div>
   </div>
 
 </body>
 
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
 <script>
-  
+
+  //cliente
+  const adicionarCliente = document.getElementById("adicionarCliente");
+
+  const nomeCliente = document.getElementById("nomeCliente");
+  const pagar10 = document.getElementById("pagar10");
+
+  adicionarCliente.addEventListener("click", function (event) 
+  {
+    let nomeClienteInput = document.createElement("input");
+    let pagar10Input = document.createElement("input");
+
+    nomeClienteInput.placeholder = "nome";
+    pagar10Input.placeholder = "Sim ou Não";
+
+    nomeCliente.appendChild(nomeClienteInput);
+    pagar10.appendChild(pagar10Input);
+  });
+
+  // quantidade produto
+  document.getElementById('quantProduto').onclick = adicionarProdutoF;
+
+  var iP = 0;
+  var produto = document.getElementById('produto');
+
+  function adicionarProdutoF()
+  {
+    var clone = produto.cloneNode(true);
+    clone.id = "produto" + ++iP;
+    produto.parentNode.appendChild(clone);
+  }
+
+  // cliente produto
+  const nomeClienteProduto = document.getElementById("nomeClienteProduto");
+
+  adicionarClienteProduto.addEventListener("click", function (event) 
+  {
+    let NomeClienteProdutoInput = document.createElement("input");
+
+    NomeClienteProdutoInput.placeholder = "nome cliente";
+
+    nomeClienteProduto.appendChild(NomeClienteProdutoInput);
+  });
+
+  // calculo
+
+
 </script>
 </html>
